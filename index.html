@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0710">
+  <meta name="description" content="Tiro Pride — a modern creator video showcase.">
+  <title>Tiro Pride — Video Showcase</title>
+  <style>
+    :root{
+      --bg:#07070a;
+      --panel:#101017;
+      --panel-2:#171720;
+      --text:#f7f7fb;
+      --muted:#9d9daa;
+      --line:rgba(255,255,255,.10);
+      --accent:#9b5cff;
+      --accent-2:#c28cff;
+      --danger:#ff5577;
+      --success:#5fe3a0;
+      --shadow:0 24px 70px rgba(0,0,0,.42);
+      --radius:22px;
+      --header:74px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at 10% -5%, rgba(155,92,255,.16), transparent 28%),
+        radial-gradient(circle at 92% 12%, rgba(194,140,255,.10), transparent 24%),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      overflow-x:hidden;
+    }
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    img{display:block;max-width:100%}
+    a{color:inherit}
+    .app-shell{min-height:100vh}
+    header{
+      position:sticky;top:0;z-index:30;height:var(--header);
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      padding:0 clamp(18px,4vw,48px);
+      border-bottom:1px solid var(--line);
+      background:rgba(7,7,10,.82);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;
+      color:#fff;font-weight:900;font-size:17px;
+      background:linear-gradient(145deg,#a66cff,#5327a8);
+      box-shadow:0 10px 30px rgba(155,92,255,.28), inset 0 0 0 1px rgba(255,255,255,.17);
+    }
+    .brand-copy{min-width:0}
+    .brand-copy strong{display:block;font-size:15px;letter-spacing:.02em;white-space:nowrap}
+    .brand-copy span{display:block;color:var(--muted);font-size:11px;white-space:nowrap}
+    .header-actions{display:flex;gap:8px}
+    .icon-btn,.ghost-btn,.primary-btn,.danger-btn{
+      border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text);
+      border-radius:14px;padding:10px 14px;transition:.2s ease;white-space:nowrap;
+    }
+    .icon-btn{width:42px;height:42px;padding:0;display:grid;place-items:center;font-size:18px}
+    .ghost-btn:hover,.icon-btn:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+    .primary-btn{background:linear-gradient(135deg,#9b5cff,#6d37d8);border-color:transparent;font-weight:800}
+    .primary-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .danger-btn{background:rgba(255,85,119,.08);border-color:rgba(255,85,119,.3);color:#ff9bb0}
+    .container{width:min(1500px,100%);margin:0 auto;padding:30px clamp(16px,4vw,48px) 60px}
+    .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:20px 0 24px}
+    .hero h1{margin:0;font-size:clamp(31px,5vw,58px);letter-spacing:-.045em;line-height:.98}
+    .hero p{margin:14px 0 0;color:var(--muted);max-width:650px;line-height:1.6;font-size:14px}
+    .stats{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .stat{padding:11px 14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.035);min-width:110px}
+    .stat b{display:block;font-size:17px}.stat span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+    .desktop-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+    .video-card{
+      border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));
+      box-shadow:0 12px 34px rgba(0,0,0,.18);transition:.25s ease;cursor:pointer;position:relative;
+    }
+    .video-card:hover{transform:translateY(-5px);border-color:rgba(155,92,255,.40);box-shadow:var(--shadow)}
+    .thumb{aspect-ratio:16/10;background:#111 center/cover no-repeat;position:relative;overflow:hidden}
+    .thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.75))}
+    .play-badge{position:absolute;left:14px;bottom:12px;z-index:2;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.70);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(8px)}
+    .index-badge{position:absolute;top:12px;right:12px;z-index:2;padding:6px 9px;border-radius:10px;background:rgba(0,0,0,.65);font-size:10px;font-weight:800;letter-spacing:.04em}
+    .card-body{padding:14px 15px 15px}
+    .card-title{margin:0;font-size:14px;line-height:1.35;font-weight:800}
+    .card-meta{margin-top:8px;color:var(--muted);font-size:11px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .card-meta .hint{color:var(--accent-2)}
+    .mobile-feed{display:none}
+    .empty{padding:50px 20px;text-align:center;border:1px dashed var(--line);border-radius:22px;color:var(--muted)}
+    .footer{margin-top:42px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;color:#777784;font-size:11px}
+    .admin-secret{opacity:.42}
+
+    /* Modal */
+    .modal-layer{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.75);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .modal-layer.show{display:flex}
+    .modal{width:min(1080px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid var(--line);border-radius:26px;background:#0d0d13;box-shadow:0 40px 110px rgba(0,0,0,.6)}
+    .modal-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:rgba(13,13,19,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    .modal-head h2{margin:0;font-size:15px;line-height:1.3}
+    .modal-head small{display:block;color:var(--muted);margin-top:3px;font-size:10px}
+    .modal-close{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff}
+    .player-wrap{background:#000;aspect-ratio:16/9}
+    .player-wrap iframe{width:100%;height:100%;border:0;display:block}
+    .modal-content{padding:18px}
+    .detail-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
+    .panel{border:1px solid var(--line);border-radius:18px;padding:16px;background:rgba(255,255,255,.025)}
+    .panel h3{font-size:13px;margin:0 0 12px}
+    .rating-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+    .star{border:0;background:transparent;color:#454553;padding:3px;font-size:27px;line-height:1;transition:.15s ease}
+    .star.active,.star:hover{color:#ffd25a;transform:scale(1.06)}
+    .avg{margin-left:7px;color:var(--muted);font-size:11px}
+    .comment-form{display:grid;gap:9px;margin-top:15px}
+    textarea,input{width:100%;border:1px solid var(--line);background:#0a0a0f;color:#fff;border-radius:13px;padding:12px 13px;outline:0;transition:.2s ease}
+    textarea{min-height:92px;resize:vertical}
+    textarea:focus,input:focus{border-color:rgba(155,92,255,.65);box-shadow:0 0 0 3px rgba(155,92,255,.10)}
+    .field-label{font-size:10px;color:var(--muted);margin-bottom:3px}
+    .comments-list{display:grid;gap:10px;max-height:365px;overflow:auto}
+    .comment{border:1px solid var(--line);background:rgba(255,255,255,.018);border-radius:14px;padding:11px 12px}
+    .comment-top{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted)}
+    .comment-stars{color:#ffd25a;letter-spacing:1px}
+    .comment-text{font-size:12px;line-height:1.5;margin-top:7px;color:#ececf2;word-break:break-word}
+    .no-comments{color:var(--muted);font-size:12px;padding:10px 0}
+
+    /* Admin */
+    .admin-modal .modal{width:min(900px,100%)}
+    .admin-login,.admin-dashboard{padding:18px}
+    .admin-login{display:grid;gap:12px;max-width:430px;margin:0 auto}
+    .admin-title{text-align:center;padding:6px 10px 4px}.admin-title h2{margin:0;font-size:24px}.admin-title p{color:var(--muted);font-size:12px;line-height:1.5}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .full{grid-column:1/-1}
+    .admin-items{display:grid;gap:9px;margin-top:15px;max-height:400px;overflow:auto}
+    .admin-item{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;border:1px solid var(--line);padding:9px;border-radius:14px;background:rgba(255,255,255,.025)}
+    .admin-item img{width:64px;height:44px;object-fit:cover;border-radius:9px}
+    .admin-item strong{font-size:12px}.admin-item span{display:block;color:var(--muted);font-size:10px;margin-top:3px;word-break:break-all}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.section-head h3{margin:0;font-size:14px}
+    .admin-note{color:#8c8c98;font-size:10px;line-height:1.5;margin-top:12px}
+
+    @media (max-width:1200px){.desktop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media (max-width:900px){
+      .hero{align-items:flex-start;flex-direction:column}.stats{justify-content:flex-start}.desktop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .detail-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:680px){
+      :root{--header:64px}
+      header{padding:0 12px}.brand-mark{width:35px;height:35px;border-radius:11px}.brand-copy span{display:none}
+      .header-actions .ghost-btn{display:none}
+      .container{padding:16px 0 42px}.hero{padding:14px 14px 16px}.hero h1{font-size:34px}.hero p{font-size:12px;line-height:1.55;margin-top:10px}.stats{display:none}
+      .desktop-grid{display:none}
+      .mobile-feed{display:block;height:calc(100vh - var(--header));height:calc(100svh - var(--header));overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior-y:contain}
+      .feed-card{height:100%;min-height:100%;scroll-snap-align:start;position:relative;background:#0a0a0e;overflow:hidden}
+      .feed-bg{position:absolute;inset:0;background-position:center;background-size:cover;filter:blur(20px);transform:scale(1.08);opacity:.55}
+      .feed-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(0,0,0,.15) 43%,rgba(0,0,0,.86) 100%)}
+      .feed-inner{position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;padding:42px 10px}
+      .feed-thumb{width:min(100%,430px);height:100%;max-height:calc(100svh - 90px);object-fit:contain;border-radius:16px;box-shadow:0 26px 70px rgba(0,0,0,.45);background:#111}
+      .feed-ui{position:absolute;left:16px;right:16px;bottom:18px;z-index:4;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end}
+      .feed-title{font-size:15px;font-weight:800;line-height:1.35}.feed-meta{color:#c6c6cd;font-size:10px;margin-top:7px}
+      .feed-play{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.22);background:rgba(15,15,18,.55);backdrop-filter:blur(12px);font-size:22px}
+      .feed-hint{position:absolute;top:15px;left:16px;z-index:4;padding:6px 9px;border-radius:10px;background:rgba(0,0,0,.48);border:1px solid rgba(255,255,255,.08);font-size:9px;color:#d0d0d6}
+      .footer{margin:0;padding:18px 14px}
+      .player-wrap{aspect-ratio:9/16;max-height:72svh}.modal{border-radius:20px;max-height:calc(100svh - 22px)}.modal-layer{padding:11px}.modal-content{padding:13px}.modal-head{padding:10px 12px}
+      .form-grid{grid-template-columns:1fr}.full{grid-column:auto}.admin-item{grid-template-columns:54px 1fr auto}.admin-item img{width:54px;height:40px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="brand">
+        <div class="brand-mark">TP</div>
+        <div class="brand-copy">
+          <strong>TIRO PRIDE</strong>
+          <span>Creator Video Showcase</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="ghost-btn" id="topAdminBtn" type="button">Admin</button>
+        <button class="icon-btn" id="openAbout" type="button" aria-label="About">i</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <div>
+          <h1>Watch. Rate. Connect.</h1>
+          <p>Explore the Tiro Pride video collection. Open any video for the full player, give a 1–5 star rating, and leave a comment. Public viewers never get an upload control.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="videoCount">0</b><span>Videos</span></div>
+          <div class="stat"><b id="ratingCount">0</b><span>Ratings</span></div>
+          <div class="stat"><b id="commentCount">0</b><span>Comments</span></div>
+        </div>
+      </section>
+
+      <section id="desktopGrid" class="desktop-grid" aria-label="Video library"></section>
+      <section id="mobileFeed" class="mobile-feed" aria-label="Mobile video feed"></section>
+
+      <div id="emptyState" class="empty" hidden>No videos are available yet.</div>
+
+      <footer class="footer">
+        <span>© <span id="year"></span> Tiro Pride</span>
+        <button class="icon-btn admin-secret" id="secretAdminBtn" type="button" aria-label="Owner access">⌁</button>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Video detail modal -->
+  <div class="modal-layer" id="videoModal" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div>
+          <h2 id="detailTitle">Video</h2>
+          <small id="detailMeta">Tiro Pride</small>
+        </div>
+        <button class="modal-close" id="closeVideoModal" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="player-wrap"><iframe id="videoFrame" title="Tiro Pride video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+      <div class="modal-content">
+        <div class="detail-grid">
+          <section class="panel">
+            <h3>Rate this video</h3>
+            <div class="rating-row" id="starPicker" aria-label="Choose a rating"></div>
+            <div class="comment-form">
+              <div>
+                <div class="field-label">Your name</div>
+                <input id="reviewerName" type="text" maxlength="60" placeholder="Enter your name">
+              </div>
+              <div>
+                <div class="field-label">Comment (optional)</div>
+                <textarea id="commentInput" maxlength="500" placeholder="Write a comment about this video..."></textarea>
+              </div>
+              <button class="primary-btn" id="submitFeedback" type="button">Submit rating & comment</button>
+            </div>
+            <div class="admin-note">Ratings and comments are stored in this browser only using localStorage. They are not synced between different devices or browsers without a backend.</div>
+          </section>
+
+          <section class="panel">
+            <h3>Recent feedback <span class="avg" id="detailAverage">No ratings yet</span></h3>
+            <div class="comments-list" id="commentsList"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin modal -->
+  <div class="modal-layer admin-modal" id="adminModal" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-head">
+        <div><h2>Owner Admin Panel</h2><small>Add or remove videos locally</small></div>
+        <button class="modal-close" id="closeAdminModal" type="button" aria-label="Close">✕</button>
+      </div>
+      <div id="adminLoginView" class="admin-login">
+        <div class="admin-title"><h2>Private Area</h2><p>Enter the master password to manage the Tiro Pride video library.</p></div>
+        <div><div class="field-label">Master password</div><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter password"></div>
+        <button class="primary-btn" id="adminLoginBtn" type="button">Unlock Admin Panel</button>
+        <div id="adminLoginError" class="admin-note" style="color:#ff9bb0;display:none">Incorrect password.</div>
+      </div>
+      <div id="adminDashboardView" class="admin-dashboard" hidden>
+        <div class="section-head"><h3>Manage videos</h3><button class="ghost-btn" id="adminLogoutBtn" type="button">Lock</button></div>
+        <div class="form-grid" style="margin-top:13px">
+          <div class="full"><div class="field-label">YouTube / video URL</div><input id="newVideoUrl" type="url" placeholder="https://youtube.com/shorts/..." autocomplete="off"></div>
+          <div><div class="field-label">Title</div><input id="newVideoTitle" type="text" placeholder="Video title" maxlength="120"></div>
+          <div><div class="field-label">Thumbnail URL (optional)</div><input id="newVideoThumb" type="url" placeholder="https://..." autocomplete="off"></div>
+          <div class="full"><button class="primary-btn" id="addVideoBtn" type="button">+ Add Video</button></div>
+        </div>
+        <div class="admin-note">This app stores changes in the current browser's localStorage. The password is client-side code, so this is an owner convenience gate—not real server-side security. For true private administration, use a backend/auth system.</div>
+        <div class="admin-items" id="adminItems"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About modal -->
+  <div class="modal-layer" id="aboutModal" aria-hidden="true">
+    <div class="modal" style="max-width:520px">
+      <div class="modal-head"><div><h2>About Tiro Pride</h2><small>Video showcase</small></div><button class="modal-close" id="closeAboutModal" type="button">✕</button></div>
+      <div class="modal-content">
+        <div class="panel"><h3>How it works</h3><div class="admin-note" style="font-size:12px;color:#c8c8d0">Public visitors can browse the video collection, open a video, submit 1–5 star ratings, and leave optional comments. The owner can unlock the separate Admin Panel to add or remove videos.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const ADMIN_PASSWORD = 'Thareesha##12';
+    const VIDEO_STORAGE_KEY = 'tiro_pride_videos_v1';
+    const FEEDBACK_STORAGE_KEY = 'tiro_pride_feedback_v1';
+
+    const initialLinks = [
+      'https://youtube.com/shorts/I6Qir9YMqXk?si=-tMe5BhdybVPMQLT',
+      'https://youtube.com/shorts/cNWM1N0BwyQ?si=BhzAX0rQlVY0FVeY',
+      'https://youtube.com/shorts/zm-8ga0n-m4?si=NvOBNceoiO1bW5ux',
+      'https://youtube.com/shorts/FEkA4CcXlAQ?si=tp7iGnfd-xwNdQ9y',
+      'https://youtube.com/shorts/7TTQA_7fW1c?si=K6bsDDjXR9C9Q5Oz',
+      'https://youtube.com/shorts/tqCnZSr3ZLo?si=dc-Gxsw1ILRFXw3N',
+      'https://youtube.com/shorts/oDTFc6dKNuk?si=55FiWFfZJEtlDAGu',
+      'https://youtube.com/shorts/1aA7Cq6ge9o?si=4pnlnW9mjeaiQx20',
+      'https://youtube.com/shorts/xVIFzuhEXDw?si=2TKj13rNQcycUZT6',
+      'https://youtube.com/shorts/NsH8naYdGq4?si=pS4b_vQH1Vwy_Phg',
+      'https://youtube.com/shorts/bmaHKUzxSfA?si=n38Kqxs9ALuMMCzm',
+      'https://youtube.com/shorts/1QHQ_pKG9iQ?si=S4i7fEMGDIuRD0e1',
+      'https://youtube.com/shorts/mlE0WVnVQsc?si=kim6r8ClVY9sCi9j',
+      'https://youtube.com/shorts/m0E7HynUNPA?si=I6agrh1wkUwiXQgG',
+      'https://youtube.com/shorts/KR25u7nt45A?si=VRt6MZAod-DJkxPD',
+      'https://youtube.com/shorts/IVy2jCpK9F8?si=HOFCx83Z2MPZEOyD',
+      'https://youtube.com/shorts/d74i5J3e3Q0?si=bqQ3IJj4welA9QlX',
+      'https://youtube.com/shorts/TI3rYU_wVHY?si=rQce5kfshpck6aIo',
+      'https://youtube.com/shorts/jhcOVPtoZ6w?si=ukJzx0BhWDB0xkOT',
+      'https://youtube.com/shorts/YONW3U3ZtqA?si=vpVY_UgF58rovgnC',
+      'https://youtube.com/shorts/q_XjgYKAJRc?si=vnYnAxkD0mxj0VyK',
+      'https://youtube.com/shorts/DIaAOS0-DZE?si=62sl7y-b-otGuqAV',
+      'https://youtube.com/shorts/FbAdsZrYT28?si=juUJaTXdCCc62EJp',
+      'https://youtube.com/shorts/8uzF9oHZiY4?si=ULWP5BAj6BKGEmg3',
+      'https://youtube.com/shorts/z4FCUTOi5xc?si=hyfUgCFj4X5c9mIU'
+    ];
+
+    const $ = (sel) => document.querySelector(sel);
+    const escapeHTML = (str) => String(str).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+
+    function uid(prefix='v') {
+      return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2,8)}`;
+    }
+
+    function extractYouTubeId(url) {
+      try {
+        const u = new URL(url);
+        if (u.hostname.includes('youtu.be')) return u.pathname.replace(/^\//,'').split('/')[0] || null;
+        if (u.pathname.includes('/shorts/')) return u.pathname.split('/shorts/')[1]?.split('/')[0] || null;
+        if (u.pathname.includes('/embed/')) return u.pathname.split('/embed/')[1]?.split('/')[0] || null;
+        if (u.searchParams.get('v')) return u.searchParams.get('v');
+        return null;
+      } catch {
+        return null;
+      }
+    }
+
+    function youtubeThumb(id){ return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`; }
+    function youtubeEmbed(id){ return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`; }
+
+    function seedVideos(){
+      const current = localStorage.getItem(VIDEO_STORAGE_KEY);
+      if (current) return JSON.parse(current);
+      const seeded = initialLinks.map((url, i) => {
+        const id = extractYouTubeId(url);
+        return {
+          id: `seed_${String(i+1).padStart(2,'0')}`,
+          url,
+          title: `Tiro Pride • Short ${String(i+1).padStart(2,'0')}`,
+          thumbnail: id ? youtubeThumb(id) : '',
+          createdAt: new Date().toISOString()
+        };
+      });
+      localStorage.setItem(VIDEO_STORAGE_KEY, JSON.stringify(seeded));
+      return seeded;
+    }
+
+    function getVideos(){
+      try { return JSON.parse(localStorage.getItem(VIDEO_STORAGE_KEY)) || []; }
+      catch { return []; }
+    }
+    function saveVideos(videos){ localStorage.setItem(VIDEO_STORAGE_KEY, JSON.stringify(videos)); }
+    function getFeedback(){
+      try {
+        const store = JSON.parse(localStorage.getItem(FEEDBACK_STORAGE_KEY)) || {};
+        return store;
+      } catch { return {}; }
+    }
+    function saveFeedback(obj){ localStorage.setItem(FEEDBACK_STORAGE_KEY, JSON.stringify(obj)); }
+
+    function normalizeFeedbackEntry(entry){
+      if (typeof entry === 'number') {
+        return {name:'Viewer', rating:Number(entry), text:'', date:''};
+      }
+      return {
+        name: String(entry?.name || 'Viewer'),
+        rating: Number(entry?.rating) || 0,
+        text: String(entry?.text || ''),
+        date: String(entry?.date || '')
+      };
+    }
+
+    function getVideoEntries(videoId){
+      const feedback = getFeedback()[videoId] || {};
+      if (Array.isArray(feedback.entries)) {
+        return feedback.entries.map(normalizeFeedbackEntry);
+      }
+      const ratings = Array.isArray(feedback.ratings) ? feedback.ratings.map(normalizeFeedbackEntry) : [];
+      const comments = Array.isArray(feedback.comments) ? feedback.comments.map(normalizeFeedbackEntry) : [];
+      return [...ratings, ...comments.filter(c => c.text)];
+    }
+
+    function stats(){
+      const feedback = getFeedback();
+      let ratings = 0, comments = 0;
+      Object.values(feedback).forEach(entry => {
+        if (Array.isArray(entry.entries)) {
+          ratings += entry.entries.filter(x => Number(x?.rating) > 0).length;
+          comments += entry.entries.filter(x => String(x?.text || '').trim()).length;
+        } else {
+          ratings += Array.isArray(entry.ratings) ? entry.ratings.length : 0;
+          comments += Array.isArray(entry.comments) ? entry.comments.length : 0;
+        }
+      });
+      $('#videoCount').textContent = getVideos().length;
+      $('#ratingCount').textContent = ratings;
+      $('#commentCount').textContent = comments;
+    }
+
+    function renderLibrary(){
+      const videos = getVideos();
+      const desktop = $('#desktopGrid');
+      const mobile = $('#mobileFeed');
+      $('#emptyState').hidden = videos.length !== 0;
+      desktop.innerHTML = '';
+      mobile.innerHTML = '';
+
+      videos.forEach((video, index) => {
+        const ytId = extractYouTubeId(video.url);
+        const thumb = video.thumbnail || (ytId ? youtubeThumb(ytId) : '');
+
+        const card = document.createElement('article');
+        card.className = 'video-card';
+        card.innerHTML = `
+          <div class="thumb" style="background-image:url('${escapeHTML(thumb)}')">
+            <div class="index-badge">${String(index+1).padStart(2,'0')}</div>
+            <div class="play-badge">▶</div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">${escapeHTML(video.title)}</h3>
+            <div class="card-meta"><span>Tiro Pride</span><span class="hint">Open to rate</span></div>
+          </div>`;
+        card.addEventListener('click', () => openVideo(video.id));
+        desktop.appendChild(card);
+
+        const feed = document.createElement('article');
+        feed.className = 'feed-card';
+        feed.innerHTML = `
+          <div class="feed-bg" style="background-image:url('${escapeHTML(thumb)}')"></div>
+          <div class="feed-hint">SWIPE UP • TAP TO WATCH</div>
+          <div class="feed-inner">
+            <img class="feed-thumb" src="${escapeHTML(thumb)}" alt="${escapeHTML(video.title)} thumbnail" loading="lazy">
+          </div>
+          <div class="feed-ui">
+            <div><div class="feed-title">${escapeHTML(video.title)}</div><div class="feed-meta">Tiro Pride • Video ${String(index+1).padStart(2,'0')}</div></div>
+            <button class="feed-play" type="button" aria-label="Watch video">▶</button>
+          </div>`;
+        feed.addEventListener('click', () => openVideo(video.id));
+        mobile.appendChild(feed);
+      });
+      stats();
+      renderAdminItems();
+    }
+
+    let currentVideoId = null;
+    let selectedRating = 0;
+
+    function openVideo(videoId){
+      const video = getVideos().find(v => v.id === videoId);
+      if (!video) return;
+      currentVideoId = videoId;
+      selectedRating = 0;
+      const ytId = extractYouTubeId(video.url);
+      $('#detailTitle').textContent = video.title;
+      $('#detailMeta').textContent = `Tiro Pride • ${ytId ? 'YouTube' : 'Video'}`;
+      $('#videoFrame').src = ytId ? youtubeEmbed(ytId) : video.url;
+      $('#reviewerName').value = '';
+      $('#commentInput').value = '';
+      renderStars();
+      renderFeedback();
+      showModal('#videoModal');
+    }
+
+    function renderStars(){
+      const host = $('#starPicker');
+      host.innerHTML = '';
+      for(let i=1;i<=5;i++){
+        const btn = document.createElement('button');
+        btn.type='button'; btn.className=`star ${i<=selectedRating?'active':''}`; btn.textContent='★';
+        btn.setAttribute('aria-label', `${i} star${i>1?'s':''}`);
+        btn.addEventListener('click',()=>{ selectedRating=i; renderStars(); });
+        host.appendChild(btn);
+      }
+    }
+
+    function renderFeedback(){
+      const entries = getVideoEntries(currentVideoId);
+      const ratings = entries.filter(e => Number(e.rating) > 0);
+      const avg = ratings.length ? (ratings.reduce((a,e)=>a+Number(e.rating),0)/ratings.length).toFixed(1) : null;
+      $('#detailAverage').textContent = avg ? `${avg}/5 • ${ratings.length} rating${ratings.length===1?'':'s'}` : 'No ratings yet';
+      const list = $('#commentsList');
+      if (!entries.length) {
+        list.innerHTML = `<div class="no-comments">No feedback yet. Be the first to leave feedback.</div>`;
+        return;
+      }
+      list.innerHTML = entries.slice().reverse().map(e => {
+        const rating = Number(e.rating) || 0;
+        const stars = rating ? `${'★'.repeat(rating)}${'☆'.repeat(5-rating)}` : 'No star rating';
+        return `
+          <div class="comment">
+            <div class="comment-top">
+              <span><strong style="color:#fff;font-size:11px">${escapeHTML(e.name)}</strong>${e.date ? ` • ${escapeHTML(e.date)}` : ''}</span>
+              <span class="comment-stars">${stars}</span>
+            </div>
+            ${e.text ? `<div class="comment-text">${escapeHTML(e.text)}</div>` : `<div class="comment-text" style="color:#9d9daa">Rated this video.</div>`}
+          </div>`;
+      }).join('');
+    }
+
+    function submitFeedback(){
+      if (!currentVideoId) return;
+      const name = $('#reviewerName').value.trim();
+      const text = $('#commentInput').value.trim();
+      if (!name) {
+        alert('Please enter your name.');
+        $('#reviewerName').focus();
+        return;
+      }
+      if (!selectedRating && !text) {
+        alert('Please choose a star rating or write a comment.');
+        return;
+      }
+
+      const store = getFeedback();
+      if (!store[currentVideoId]) store[currentVideoId] = {entries:[]};
+      if (!Array.isArray(store[currentVideoId].entries)) store[currentVideoId].entries = [];
+      store[currentVideoId].entries.push({
+        name,
+        rating: selectedRating,
+        text,
+        date: new Date().toLocaleString()
+      });
+      saveFeedback(store);
+      $('#reviewerName').value = '';
+      $('#commentInput').value = '';
+      selectedRating = 0;
+      renderStars();
+      renderFeedback();
+      stats();
+    }
+
+    function showModal(selector){
+      const el = $(selector); el.classList.add('show'); el.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+    }
+    function hideModal(selector){
+      const el = $(selector); el.classList.remove('show'); el.setAttribute('aria-hidden','true');
+      if (!document.querySelector('.modal-layer.show')) document.body.style.overflow='';
+    }
+
+    function renderAdminItems(){
+      const host = $('#adminItems');
+      if (!host) return;
+      const videos = getVideos();
+      if (!videos.length){host.innerHTML='<div class="admin-note">No videos in library.</div>';return;}
+      host.innerHTML = videos.map((v,i)=>{
+        const id = extractYouTubeId(v.url); const thumb = v.thumbnail || (id ? youtubeThumb(id) : '');
+        return `<div class="admin-item"><img src="${escapeHTML(thumb)}" alt=""><div><strong>${escapeHTML(v.title)}</strong><span>${i+1}. ${escapeHTML(v.url)}</span></div><button class="danger-btn" type="button" data-delete-id="${escapeHTML(v.id)}">Remove</button></div>`;
+      }).join('');
+      host.querySelectorAll('[data-delete-id]').forEach(btn => btn.addEventListener('click',()=>deleteVideo(btn.dataset.deleteId)));
+    }
+
+    function openAdmin(){
+      $('#adminPassword').value='';$('#adminLoginError').style.display='none';
+      $('#adminLoginView').hidden=false;$('#adminDashboardView').hidden=true;
+      showModal('#adminModal');
+    }
+    function unlockAdmin(){
+      if ($('#adminPassword').value === ADMIN_PASSWORD) {
+        $('#adminLoginView').hidden=true;$('#adminDashboardView').hidden=false;renderAdminItems();
+      } else {
+        $('#adminLoginError').style.display='block';
+      }
+    }
+    function addVideo(){
+      const url = $('#newVideoUrl').value.trim();
+      const title = $('#newVideoTitle').value.trim() || 'Tiro Pride Video';
+      const customThumb = $('#newVideoThumb').value.trim();
+      const id = extractYouTubeId(url);
+      if (!url){ alert('Please enter a video URL.'); return; }
+      if (!id && !/^https?:\/\//i.test(url)){ alert('Please enter a valid YouTube or web video URL.'); return; }
+      const videos = getVideos();
+      if (videos.some(v => v.url === url)){ alert('That video is already in the library.'); return; }
+      videos.push({id:uid(),url,title,thumbnail:customThumb || (id ? youtubeThumb(id) : ''),createdAt:new Date().toISOString()});
+      saveVideos(videos); renderLibrary();
+      $('#newVideoUrl').value='';$('#newVideoTitle').value='';$('#newVideoThumb').value='';
+      renderAdminItems();
+    }
+    function deleteVideo(videoId){
+      if (!confirm('Remove this video from the local library?')) return;
+      saveVideos(getVideos().filter(v=>v.id!==videoId));
+      renderLibrary();
+      if (currentVideoId===videoId) { hideModal('#videoModal'); currentVideoId=null; }
+    }
+
+    $('#submitFeedback').addEventListener('click',submitFeedback);
+    $('#closeVideoModal').addEventListener('click',()=>{ $('#videoFrame').src=''; hideModal('#videoModal'); });
+    $('#topAdminBtn').addEventListener('click',openAdmin);
+    $('#secretAdminBtn').addEventListener('click',openAdmin);
+    $('#closeAdminModal').addEventListener('click',()=>hideModal('#adminModal'));
+    $('#adminLoginBtn').addEventListener('click',unlockAdmin);
+    $('#adminPassword').addEventListener('keydown',e=>{if(e.key==='Enter')unlockAdmin()});
+    $('#adminLogoutBtn').addEventListener('click',()=>{ $('#adminLoginView').hidden=false;$('#adminDashboardView').hidden=true; });
+    $('#addVideoBtn').addEventListener('click',addVideo);
+    $('#closeAboutModal').addEventListener('click',()=>hideModal('#aboutModal'));
+    $('#openAbout').addEventListener('click',()=>showModal('#aboutModal'));
+
+    document.querySelectorAll('.modal-layer').forEach(layer=>layer.addEventListener('click',e=>{ if(e.target===layer) hideModal(`#${layer.id}`); }));
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape') document.querySelectorAll('.modal-layer.show').forEach(el=>hideModal(`#${el.id}`));
+      if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='a'){e.preventDefault();openAdmin();}
+    });
+
+    $('#year').textContent = new Date().getFullYear();
+    seedVideos();
+    renderLibrary();
+  </script>
+</body>
+</html>
